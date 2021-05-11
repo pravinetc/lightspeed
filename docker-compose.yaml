@@ -1,0 +1,7 @@
+version: '3.7'
+services:
+  terraform:
+    image: {IMAGE_NAME}
+        volumes: 
+        env_file:
+        working_dir:
