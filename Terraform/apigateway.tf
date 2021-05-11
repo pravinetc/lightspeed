@@ -7,7 +7,8 @@ resource "aws_api_gateway_rest_api" "api" {
 resource "aws_api_gateway_resource" "proxy" {
   rest_api_id = "${aws_api_gateway_rest_api.api.id}"
   parent_id   = "${aws_api_gateway_rest_api.api.root_resource_id}"
-  path_part   = "{proxy+}"
+#  path_part   = "{proxy+}"
+   path_part = "{lightspeed}"
 }
 
 # Requests mapping
@@ -23,7 +24,7 @@ resource "aws_api_gateway_integration" "request_integration" {
   resource_id = "${aws_api_gateway_method.request_method.resource_id}"
   http_method = "${aws_api_gateway_method.request_method.http_method}"
   type        = "AWS_PROXY"
-  uri         = "${aws_lambda_function.lambda.arn}"
+  uri         = "${aws_lambda_function.lambda.invoke_arn}"
 
   # AWS lambdas can only be invoked with the POST method
   integration_http_method = "POST"
@@ -33,4 +34,5 @@ resource "aws_api_gateway_integration" "request_integration" {
 resource "aws_api_gateway_deployment" "deployment" {
   rest_api_id = "${aws_api_gateway_rest_api.api.id}"
   stage_name  = "${var.stage}"
+  depends_on = ["aws_api_gateway_integration.request_integration"]
 }
